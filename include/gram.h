@@ -117,8 +117,14 @@ typedef unsigned int offset_t;
 
 #define RFLD(_reg, fld) ((_reg##_T)RGET(_reg)).f.fld
 
-/* For MREG -only */
+/* For MREG -only, change base addr. of the given `_reg' */
 #define RRBS(_reg, _new_base) addr_t _reg##_A = (_new_base + _reg##_O)
+
+/* Duplicate `_reg'_T to `_new_reg'_T, and use `_reg'_A as base addr. with offset `_new_off' */
+#define GRAM_DUP(_reg, _new_reg, _new_off) \
+	typedef _reg##_T _new_reg##_T; \
+	static const offset_t _new_reg##_O ATTR_UNUSED = (_new_off); \
+	static const addr_t _new_reg##_A ATTR_UNUSED = _reg##_A + _new_off;
 
 #define _RVAL(_reg) (*((volatile addr_t *)(_reg##_A)))
 
