@@ -75,7 +75,28 @@ GRAM32(
 #define CSR_MEDELEG_K (0x302)
 #define CSR_MIDELEG_K (0x303)
 #define CSR_MIE_K (0x304)
+GRAM32(
+	CSR_MIE, -1, -1,
+	RF_RSV32(0, 0);
+	RFIELD32(1, 1, ssie);
+	RF_RSV32(2, 2);
+	RFIELD32(3, 3, msie);
+	RF_RSV32(4, 4);
+	RFIELD32(5, 5, stie);
+	RF_RSV32(6, 6);
+	RFIELD32(7, 7, mtie);
+	RF_RSV32(8, 8);
+	RFIELD32(9, 9, seie);
+	RF_RSV32(10, 10);
+	RFIELD32(11, 11, meie);
+	RF_RSV32(31, 12);
+	);
 #define CSR_MTVEC_K (0x305)
+GRAM32(
+	CSR_MTVEC, -1, -1,
+	RFIELD32(1, 0, mode);
+	RFIELD32(31, 2, base);
+	);
 #define CSR_MCOUNTEREN_K (0x306)
 #define CSR_MENVCFG_K (0x30a)
 #define CSR_MSTATUSH_K (0x310)
@@ -112,9 +133,34 @@ GRAM32(
 #define CSR_MHPMEVENT31_K (0x33f)
 #define CSR_MSCRATCH_K (0x340)
 #define CSR_MEPC_K (0x341)
+GRAM32(
+	CSR_MEPC, -1, -1,
+	RFIELD32(31, 0, mepc);
+	);
 #define CSR_MCAUSE_K (0x342)
+GRAM32(
+	CSR_MCAUSE, -1, -1,
+	RFIELD32(30, 0, exce_code);
+	RFIELD32(31, 31, interrupt);
+	);
 #define CSR_MTVAL_K (0x343)
 #define CSR_MIP_K (0x344)
+GRAM32(
+	CSR_MIP, -1, -1,
+	RF_RSV32(0, 0);
+	RFIELD32(1, 1, ssip);
+	RF_RSV32(2, 2);
+	RFIELD32(3, 3, msip);
+	RF_RSV32(4, 4);
+	RFIELD32(5, 5, stip);
+	RF_RSV32(6, 6);
+	RFIELD32(7, 7, mtip);
+	RF_RSV32(8, 8);
+	RFIELD32(9, 9, seip);
+	RF_RSV32(10, 10);
+	RFIELD32(11, 11, meip);
+	RF_RSV32(31, 12);
+	);
 #define CSR_MTINST_K (0x34a)
 #define CSR_MTVAL2_K (0x34b)
 #define CSR_PMPCFG0_K (0x3a0)
