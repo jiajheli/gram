@@ -1,3 +1,28 @@
+// SPDX-License-Identifier: MIT
+/*
+ * MIT License
+ *
+ * Copyright (c) 2022 Jia-Jhe Li
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #ifndef __GRAM_H__
 #define __GRAM_H__
 
@@ -6,7 +31,7 @@
 #endif
 
 #if (__BYTE_ORDER__ != __ORDER_BIG_ENDIAN__) && \
-	(__BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__)
+    (__BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__)
 #	error "unknown __BYTE_ORDER__ value in GCC"
 #endif
 
@@ -38,17 +63,17 @@ typedef unsigned int offset_t;
 #	define arch_sreg_write(_reg_key, _val)
 #endif
 
-/* Following scripts is used to from:
+/* Following scripts are used to form:
 
 	#define GRAM32(_reg, _base, _off, ...) \
- 	typedef union { \
- 		struct { \
- 			__VA_ARGS__ \
- 		} f; \
- 		reg32_t v; \
- 	} _reg##_T; \
- 	static const addr_t _reg##_A ATTR_UNUSED = (addr_t)(_base + _off); \
- 	static const offset_t _reg##_O ATTR_UNUSED = (_off);
+	typedef union { \
+		struct { \
+			__VA_ARGS__ \
+		} f; \
+		reg32_t v; \
+	} _reg##_T; \
+	static const addr_t _reg##_A ATTR_UNUSED = (addr_t)(_base + _off); \
+	static const offset_t _reg##_O ATTR_UNUSED = (_off);
 
 	For special registers, e.g., CP0_STATUS in MIPS or CSR_MSTATUS in RISCV,
 		#define <_reg>_K <KEY>
@@ -93,7 +118,7 @@ typedef unsigned int offset_t;
 		_reg_name##_T dummy; \
 		__typeof__(dummy.v) _ret; \
 		if (_reg_name##_O == -1) { \
-			_ret = (__typeof__(dummy.v))arch_sreg_read(_reg_name##_K);	\
+			_ret = (__typeof__(dummy.v))arch_sreg_read(_reg_name##_K); \
 		} else { \
 			_ret = _RVAL(_reg_name); \
 		} \
@@ -109,24 +134,24 @@ typedef unsigned int offset_t;
 		} \
 	})
 
-#define RRMW(rtype, ...) do {										\
-		rtype##_T dummyr = { .v = RGET(rtype) };		\
-		PP_NARG(__VA_ARGS__)(dummyr, __VA_ARGS__);	\
-		RSET(rtype, dummyr.v);											\
+#define RRMW(rtype, ...) do { \
+		rtype##_T dummyr = { .v = RGET(rtype) }; \
+		PP_NARG(__VA_ARGS__)(dummyr, __VA_ARGS__); \
+		RSET(rtype, dummyr.v); \
 	} while(0)
 
 #define RFLD(_reg, fld) ((_reg##_T)RGET(_reg)).f.fld
 
-/* For MREG -only, change base addr. of the given `_reg' */
+/* For MREG only, change base addr. of the given `_reg' */
 #define RRBS(_reg, _new_base) addr_t _reg##_A = (_new_base + _reg##_O)
 
-/* Duplicate `_reg'_T to `_new_reg'_T, and use `_reg'_A as base addr. with offset `_new_off' */
+/* For MREG only, duplicate `_reg'_T to `_new_reg'_T, and use `_reg'_A as base addr. with offset `_new_off' */
 #define GRAM_DUP(_reg, _new_reg, _new_off) \
 	typedef _reg##_T _new_reg##_T; \
 	static const offset_t _new_reg##_O ATTR_UNUSED = (_new_off); \
 	static const addr_t _new_reg##_A ATTR_UNUSED = _reg##_A + _new_off;
 
-#define _RVAL(_reg) (*((volatile addr_t *)(_reg##_A)))
+#define _RVAL(_reg) (((volatile _reg##_T *)(_reg##_A))->v)
 
 /* for __VA_NARG__, https://groups.google.com/g/comp.std.c/c/d-6Mj5Lko_s */
 #define PP_NARG(...) PP_NARG_(__VA_ARGS__, PP_RSEQ_N())
